@@ -2,10 +2,10 @@ package errs
 
 import (
 	"errors"
-	"rest/response"
 
 	"github.com/jackc/pgerrcode"
 	"github.com/jackc/pgx/v5/pgconn"
+	"github.com/moonlit0114/rest/response"
 )
 
 var PgxErrorMap = map[string]*response.RestResponse{

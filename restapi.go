@@ -1,8 +1,8 @@
 package rest
 
 import (
-	"rest/errs"
-	"rest/response"
+	"github.com/moonlit0114/rest/errs"
+	"github.com/moonlit0114/rest/response"
 
 	"github.com/gin-gonic/gin"
 )

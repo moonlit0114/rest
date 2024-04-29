@@ -1,8 +1,7 @@
 package funcs
 
 import (
-	"rest/db"
-
+	"github.com/moonlit0114/rest/db"
 	"gorm.io/gorm"
 )
 

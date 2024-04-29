@@ -1,7 +1,7 @@
 package errs
 
 import (
-	"rest/response"
+	"github.com/moonlit0114/rest/response"
 )
 
 type ErrHandler = func(error) *response.RestResponse

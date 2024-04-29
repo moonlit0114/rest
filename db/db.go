@@ -9,7 +9,7 @@ import (
 
 var DB *gorm.DB
 
-func SetDB(db *gorm.DB) error {
+func InitDB(db *gorm.DB) error {
 	if DB != nil {
 		return errors.New("db already set")
 	}

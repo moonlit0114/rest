@@ -3,7 +3,7 @@ package errs
 import (
 	"errors"
 
-	"rest/response"
+	"github.com/moonlit0114/rest/response"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

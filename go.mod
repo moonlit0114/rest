@@ -1,4 +1,4 @@
-module rest
+module github.com/moonlit0114/rest
 
 go 1.22.2
 

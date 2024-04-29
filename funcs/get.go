@@ -3,7 +3,8 @@ package funcs
 import (
 	"fmt"
 	"log/slog"
-	"rest/db"
+
+	"github.com/moonlit0114/rest/db"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"

@@ -3,9 +3,10 @@ package funcs
 import (
 	"fmt"
 	"reflect"
-	"rest/db"
-	"rest/errs"
 	"strings"
+
+	"github.com/moonlit0114/rest/db"
+	"github.com/moonlit0114/rest/errs"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
