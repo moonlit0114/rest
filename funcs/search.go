@@ -40,7 +40,7 @@ func GetSearchContent[T any](tx *gorm.DB,
 	return total, &models, err
 }
 
-func GetSearchData[T any](tx *gorm.DB,
+func GetSearchDataWithTransaction[T any](tx *gorm.DB,
 	searchPageParams *SearchPageParams,
 	scopes ...db.ScopeFunc) (*PageResult, error) {
 	var (
@@ -52,5 +52,21 @@ func GetSearchData[T any](tx *gorm.DB,
 		return nil, err
 	}
 	result := NewPageResult(searchPageParams.PageParams, len(*models), int(total), models)
+	return result, err
+}
+
+func GetSearchData[T any](searchPageParams *SearchPageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
+	var (
+		result *PageResult
+		err    error
+	)
+	if err = db.DB.Transaction(func(tx *gorm.DB) error {
+		if result, err = GetSearchDataWithTransaction[T](tx, searchPageParams, scopes...); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
+	}
 	return result, err
 }

@@ -1,63 +1,67 @@
 package funcs
 
 import (
-	"fmt"
-	"log/slog"
-
 	"github.com/moonlit0114/rest/db"
 
-	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
 
-func GetDataWithLogWord[T any](c *gin.Context, keyWord string, model *T, scopes ...db.ScopeFunc) error {
-	err := GetData(c, model, scopes...)
-	if err != nil {
-		slog.Warn(fmt.Sprintf("get %s info failed", keyWord),
-			slog.String("current_user", c.GetString("current_user")),
-			slog.String("err", err.Error()))
+func GetDataWithTransaction[T any](tx *gorm.DB, scopes ...db.ScopeFunc) (*T, error) {
+	var (
+		result T
+		err    error
+	)
+	for _, scopeFunc := range scopes {
+		tx = scopeFunc(tx)
 	}
-	return nil
+	if err = tx.First(&result).Error; err != nil {
+		return nil, err
+	}
+	return &result, err
 }
 
-func GetData[T any](c *gin.Context, model *T, scopes ...db.ScopeFunc) error {
-	var err error
-	if err = c.BindUri(&model); err != nil {
-		return err
+func GetData[T any](tx *gorm.DB, scopes ...db.ScopeFunc) (*T, error) {
+	var (
+		result *T
+		err    error
+	)
+	if err = db.DB.Transaction(func(tx *gorm.DB) error {
+		if result, err = GetDataWithTransaction[T](tx, scopes...); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
-	tx := db.DB.Unscoped()
-	return GetDataWithTransaction(c, tx, model, scopes...)
+	return result, err
 }
 
-func GetBatchData[T any](c *gin.Context, models *[]T, scopes ...db.ScopeFunc) error {
-	var err error
-	if err = c.BindUri(&models); err != nil {
-		return err
+func GetBatchDataWithTransaction[T any](tx *gorm.DB, scopes ...db.ScopeFunc) (*[]T, error) {
+	var (
+		result []T
+		err    error
+	)
+	for _, scopeFunc := range scopes {
+		tx = scopeFunc(tx)
 	}
-	tx := db.DB.Unscoped()
-	return GetBatchDataWithTransaction(c, tx, models, scopes...)
+	if err = tx.Find(&result).Error; err != nil {
+		return nil, err
+	}
+	return &result, err
 }
 
-func GetDataWithTransaction[T any](c *gin.Context, tx *gorm.DB, model *T, scopes ...db.ScopeFunc) error {
-	var err error
-	c.BindUri(&model)
-	tx = tx.Unscoped()
-	for _, f := range scopes {
-		tx = f(tx)
+func GetBatchData[T any](scopes ...db.ScopeFunc) (*[]T, error) {
+	var (
+		result *[]T
+		err    error
+	)
+	if err = db.DB.Transaction(func(tx *gorm.DB) error {
+		if result, err = GetBatchDataWithTransaction[T](tx, scopes...); err != nil {
+			return err
+		}
+		return nil
+	}); err != nil {
+		return nil, err
 	}
-	tx = tx.First(&model)
-	err = tx.Error
-	return err
-}
-
-func GetBatchDataWithTransaction[T any](c *gin.Context, tx *gorm.DB, models *[]T, scopes ...db.ScopeFunc) error {
-	var err error
-	c.BindUri(&models)
-	tx = tx.Unscoped()
-	for _, f := range scopes {
-		tx = f(tx)
-	}
-	tx = tx.Find(&models)
-	err = tx.Error
-	return err
+	return result, err
 }
