@@ -20,7 +20,7 @@ func GetDataWithTransaction[T any](tx *gorm.DB, scopes ...db.ScopeFunc) (*T, err
 	return &result, err
 }
 
-func GetData[T any](tx *gorm.DB, scopes ...db.ScopeFunc) (*T, error) {
+func GetData[T any](scopes ...db.ScopeFunc) (*T, error) {
 	var (
 		result *T
 		err    error
