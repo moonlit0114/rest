@@ -86,7 +86,7 @@ func GetPageDataWithTransaction[T any](tx *gorm.DB, models *[]T, pageParam *Page
 	return result, err
 }
 
-func GetPageData[T any](tx *gorm.DB, models *[]T, pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
+func GetPageData[T any](models *[]T, pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
 	var (
 		result *PageResult
 		err    error
