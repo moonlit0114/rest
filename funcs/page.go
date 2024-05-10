@@ -42,8 +42,9 @@ func NewPageResult(pageParams PageParams, count, total int, data any) *PageResul
 	return &PageResult{pageParams, count, total, data}
 }
 
-func GetPageDataWithTransaction[T any](tx *gorm.DB, models *[]T, pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
+func GetPageDataWithTransaction[T any](tx *gorm.DB, pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
 	var (
+		models *[]T
 		total  int64
 		pageNo int
 		err    error
@@ -86,13 +87,13 @@ func GetPageDataWithTransaction[T any](tx *gorm.DB, models *[]T, pageParam *Page
 	return result, err
 }
 
-func GetPageData[T any](models *[]T, pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
+func GetPageData[T any](pageParam *PageParams, scopes ...db.ScopeFunc) (*PageResult, error) {
 	var (
 		result *PageResult
 		err    error
 	)
 	if err = db.DB.Transaction(func(tx *gorm.DB) error {
-		if result, err = GetPageDataWithTransaction[T](tx, models, pageParam, scopes...); err != nil {
+		if result, err = GetPageDataWithTransaction[T](tx, pageParam, scopes...); err != nil {
 			return err
 		}
 		return nil
