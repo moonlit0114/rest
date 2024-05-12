@@ -15,7 +15,7 @@ func GetSearchContent[T any](tx *gorm.DB,
 	)
 	tx = tx.Model(&models)
 	// 处理搜索条件
-	if searchPageParams.ParseCondition(); err != nil {
+	if err = searchPageParams.ParseCondition(); err != nil {
 		return 0, nil, err
 	}
 	for _, condition := range searchPageParams.SearchConditions {
