@@ -202,13 +202,14 @@ func GetSearchPageContent[T any](tx *gorm.DB,
 	}
 
 	// 处理翻页参数
-	if searchPageParams.OrderBy == "" {
-		searchPageParams.OrderBy = "ID"
-	}
 	tx = tx.Count(&total).
 		Limit(searchPageParams.Size).
-		Offset((searchPageParams.Page - 1) * searchPageParams.Size).
-		Order(searchPageParams.OrderBy)
+		Offset((searchPageParams.Page - 1) * searchPageParams.Size)
+
+	// 处理排序
+	if searchPageParams.OrderBy != "" {
+		tx = tx.Order(searchPageParams.OrderBy)
+	}
 
 	// 处理传入的scopes函数
 	for _, f := range scopes {
