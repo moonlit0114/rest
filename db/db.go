@@ -37,6 +37,13 @@ func Where(query any, args ...any) ScopeFunc {
 	}
 }
 
+func Or(query any, args ...any) ScopeFunc {
+	return func(db *gorm.DB) *gorm.DB {
+		db = db.Or(query, args...)
+		return db
+	}
+}
+
 func Preloads(preloads ...string) ScopeFunc {
 	return func(db *gorm.DB) *gorm.DB {
 		for _, preload := range preloads {
